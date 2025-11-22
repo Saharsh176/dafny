@@ -10,13 +10,15 @@
             --accent-color: #3498db;
             --bg-color: #f4f7f9;
             --card-bg: #ffffff;
-            --sidebar-width: 250px;
+            --sidebar-width: 260px;
             --error-text: #d63031;
             --comment-text: #009432;
             --code-bg: #2d3436;
             --code-text: #dfe6e9;
             --terminal-bg: #fff5f5;
             --terminal-border: #ffcccc;
+            --success-bg: #f0fff4;
+            --success-border: #bceac6;
             --explanation-bg: #eef7fb;
             --explanation-border: #b3e5fc;
         }
@@ -42,16 +44,18 @@
             left: 0;
             padding-top: 20px;
             overflow-y: auto;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
 
         .sidebar h2 {
             text-align: center;
-            font-size: 1.2em;
+            font-size: 1.3em;
             margin-bottom: 30px;
             border-bottom: 2px solid var(--accent-color);
             padding-bottom: 10px;
-            margin-left: 10px;
-            margin-right: 10px;
+            margin-left: 15px;
+            margin-right: 15px;
+            font-weight: 600;
         }
 
         .sidebar a {
@@ -59,19 +63,21 @@
             padding: 15px 25px;
             color: #ecf0f1;
             text-decoration: none;
-            transition: background 0.3s;
-            border-left: 4px solid transparent;
+            transition: all 0.3s;
+            border-left: 5px solid transparent;
+            font-size: 0.95em;
         }
 
         .sidebar a:hover {
             background-color: #34495e;
-            border-left: 4px solid var(--accent-color);
+            border-left: 5px solid var(--accent-color);
+            padding-left: 30px;
         }
 
         /* Main Content */
         .main-content {
             margin-left: var(--sidebar-width);
-            padding: 40px;
+            padding: 50px;
             width: calc(100% - var(--sidebar-width));
             max-width: 1000px;
         }
@@ -81,16 +87,17 @@
             border-bottom: 4px solid var(--accent-color);
             padding-bottom: 10px;
             margin-bottom: 40px;
+            font-size: 2.2em;
         }
 
         h2.task-title {
             background-color: var(--primary-color);
             color: white;
-            padding: 12px 20px;
+            padding: 15px 25px;
             border-radius: 6px;
             margin-top: 60px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         h3 {
@@ -98,14 +105,15 @@
             margin-top: 40px;
             border-bottom: 1px solid #e0e0e0;
             padding-bottom: 8px;
+            font-size: 1.3em;
         }
 
         .section {
             background: var(--card-bg);
-            padding: 30px;
+            padding: 35px;
             margin-bottom: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
         }
 
         .note {
@@ -114,6 +122,7 @@
             padding: 15px;
             margin: 20px 0;
             border-radius: 4px;
+            font-size: 0.95em;
         }
 
         .explanation {
@@ -133,7 +142,7 @@
             padding: 20px;
             border-radius: 8px;
             font-family: 'Courier New', Courier, monospace;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             border: 1px solid #444;
         }
         .logic-step { margin-bottom: 8px; }
@@ -148,9 +157,10 @@
             font-family: 'Courier New', Courier, monospace;
             font-size: 0.95em;
             border: 1px solid #ccc;
+            margin-top: 10px;
         }
 
-        /* Terminal Output */
+        /* Terminal Output (Errors) */
         .terminal-output {
             background-color: var(--terminal-bg);
             border: 1px solid var(--terminal-border);
@@ -163,13 +173,24 @@
             box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
         }
 
+        /* Terminal Output (Success) */
+        .terminal-success {
+            background-color: var(--success-bg);
+            border: 1px solid var(--success-border);
+            color: #2d3436;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
         /* Utils */
         .error-red { color: var(--error-text); font-weight: bold; }
         .comment-green { color: var(--comment-text); font-style: italic; }
         .verifier-black { color: #000000; font-weight: bold; display: block; margin-top: 10px; }
         
-        .success-tag { background: #00b894; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; vertical-align: middle;}
-        .fail-tag { background: #d63031; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; vertical-align: middle;}
+        .success-tag { background: #00b894; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; vertical-align: middle; font-weight: bold;}
+        .fail-tag { background: #d63031; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; vertical-align: middle; font-weight: bold;}
 
         html { scroll-behavior: smooth; }
     </style>
@@ -182,6 +203,7 @@
         <a href="#task2">Task 2: First Negative</a>
         <a href="#task3">Task 3: Factorial</a>
         <a href="#task4">Task 4: Tribonacci</a>
+        <a href="#conclusion">Conclusion & Future</a>
     </div>
 
     <div class="main-content">
@@ -196,7 +218,7 @@
                 <strong>Note on Preconditions:</strong> No specific preconditions are required because the absolute value is defined for all integers. We can add <code>requires true</code> if needed for style.
             </div>
 
-            <h3>Experiment 1: Correct Implementation <span class="success-tag">Verified</span></h3>
+            <h3>Experiment 0: Correct Implementation <span class="success-tag">Verified</span></h3>
             <pre>
 method Abs(x: int) returns (y: int)
     ensures y >= 0
@@ -205,11 +227,14 @@ method Abs(x: int) returns (y: int)
     if x < 0 { return -x; }
     else { return x; }
 }</pre>
+            <div class="terminal-success">
+<span class="verifier-black">Dafny program verifier finished with 9 verified, 0 error</span>
+            </div>
             <div class="explanation">
                 <strong>Why it works:</strong> The postconditions cover both properties of absolute value: non-negativity and magnitude correctness. Dafny can explore both branches of the <code>if</code> statement to prove this.
             </div>
 
-            <h3>Experiment 2: Weak Postcondition <span class="fail-tag">Assertion Error</span></h3>
+            <h3>Experiment 1: Weak Postcondition <span class="fail-tag">Assertion Error</span></h3>
             <p><strong>Modification:</strong> Removed <code>ensures y >= 0</code> and ran a test method.</p>
             <pre>
 method TestAbs() {
@@ -228,7 +253,7 @@ test.dfy(22,3): <span class="error-red">Error: assertion might not hold</span>
                 <strong>Explanation:</strong> Dafny treats methods as "black boxes" when they are called. Even though the code inside <code>Abs</code> correctly returns a positive number, the <em>contract</em> (the <code>ensures</code> clause) did not promise it. Therefore, <code>TestAbs</code> cannot assume <code>y > 0</code>.
             </div>
 
-            <h3>Experiment 3: Incorrect Logic <span class="fail-tag">Postcondition Error</span></h3>
+            <h3>Experiment 2: Incorrect Logic <span class="fail-tag">Postcondition Error</span></h3>
             <p><strong>Case:</strong> Returning <code>x</code> when <code>x < 0</code>.</p>
             <div class="terminal-output">
 test.dfy(7,0): <span class="error-red">Error: a postcondition could not be proved on this return path</span>
@@ -243,14 +268,33 @@ test.dfy(5,13): Related location: this is the postcondition that could not be pr
 
 <span class="verifier-black">Dafny program verifier finished with 8 verified, 1 error</span>
             </div>
-            <div class="explanation">
-                <strong>Explanation:</strong> Here the implementation contradicts the contract. We promised <code>y >= 0</code>, but if the input is negative, we returned it directly. Dafny catches this violation immediately.
-            </div>
         </div>
 
         <div id="task2" class="section">
             <h2 class="task-title">Task 2: Find First Negative Index</h2>
             <p><strong>Objective:</strong> Find the index of the first occurrence of a negative number in an array.</p>
+            
+            <h3>Experiment 0: Correct Implementation <span class="success-tag">Verified</span></h3>
+            <pre>
+method FindFirstNegative(a: array&lt;int&gt;) returns (index: int)
+    requires a != null
+    ensures 0 <= index <= a.Length
+    ensures index < a.Length ==> a[index] < 0
+    ensures forall k :: 0 <= k < index ==> a[k] >= 0
+{
+    index := 0;
+    while index < a.Length
+        invariant 0 <= index <= a.Length
+        invariant forall k :: 0 <= k < index ==> a[k] >= 0
+        decreases a.Length - index
+    {
+        if a[index] < 0 { return; }
+        index := index + 1;
+    }
+}</pre>
+            <div class="terminal-success">
+<span class="verifier-black">Dafny program verifier finished with 12 verified, 0 error</span>
+            </div>
 
             <h3>Experiment 1: Missing Precondition <span class="fail-tag">Null Errors</span></h3>
             <p><strong>Modification:</strong> Commented out <code>requires a != null</code>.</p>
@@ -363,6 +407,27 @@ test.dfy(28,2): <span class="error-red">Error: decreases expression might not de
                 <div style="margin-top: 10px; color: #81ecec;">The invariant guarantees that each multiplication step correctly computes the next factorial value.</div>
             </div>
 
+            <h3>Experiment 0: Correct Implementation <span class="success-tag">Verified</span></h3>
+            <pre>
+method Factorial(n: int) returns (f: int)
+    requires n >= 0
+    ensures f == fact(n)
+{
+    f := 1;
+    var i := 0;
+    while i < n
+        invariant 0 <= i <= n
+        invariant f == fact(i)
+        decreases n - i
+    {
+        i := i + 1;
+        f := f * i;
+    }
+}</pre>
+            <div class="terminal-success">
+<span class="verifier-black">Dafny program verifier finished with 14 verified, 0 error</span>
+            </div>
+
             <h3>Experiment 1: Incorrect Precondition <span class="fail-tag">Precondition Error</span></h3>
             <p><strong>Modification:</strong> Changed <code>requires n >= 0</code> to <code>requires n > 0</code>. This causes issues with recursive definitions where <code>n</code> might reach 0.</p>
             
@@ -457,6 +522,32 @@ test.dfy(116,2): <span class="error-red">Error: assertion might not hold</span>
                 <strong>Note:</strong> Changing the <code>decreases</code> variant causes termination errors similar to previous tasks. Also, setting invariant bounds like <code>2 <= i <= n</code> can cause index-out-of-bounds errors during initialization or loop exit.
             </div>
 
+            <h3>Experiment 0: Correct Implementation <span class="success-tag">Verified</span></h3>
+            <pre>
+method ComputeTribonacci(n: int) returns (t: int)
+    requires n >= 0
+    ensures t == Trib(n)
+{
+    if n == 0 { return 0; }
+    if n == 1 { return 1; }
+    
+    var a, b, c := 0, 1, 1;
+    var i := 0;
+    
+    while i < n
+        invariant 0 <= i <= n
+        invariant a == Trib(i) && b == Trib(i+1) && c == Trib(i+2)
+        decreases n - i
+    {
+        a, b, c := b, c, a + b + c;
+        i := i + 1;
+    }
+    return a;
+}</pre>
+            <div class="terminal-success">
+<span class="verifier-black">Dafny program verifier finished with 16 verified, 0 error</span>
+            </div>
+
             <h3>Experiment 1: Incorrect Preconditions <span class="fail-tag">Precondition Error</span></h3>
             <p><strong>Modification:</strong> Changing <code>requires n >= 0</code> to <code>requires n > 0</code>.</p>
             <div class="terminal-output">
@@ -543,10 +634,10 @@ test.dfy(176,2): <span class="error-red">Error: assertion might not hold</span>
 
 <span class="verifier-black">Dafny program verifier finished with 15 verified, 1 error</span>
             </div>
-            <div class="explanation">
-                <strong>Explanation:</strong> As seen in previous tasks, without an `ensures` clause, the `ComputeTribonacci` method is a black box to the rest of the program. It calculates the result, but refuses to sign a contract guaranteeing what that result is. Therefore, `assert t == 7` fails verification.
-            </div>
+            
         </div>
+
+        
     </div>
 
 </body>
