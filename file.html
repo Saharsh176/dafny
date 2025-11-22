@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logic Assignment 2 – Dafny Verification Report</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f4f7f9;
+            --card-bg: #ffffff;
+            --sidebar-width: 250px;
+            --error-text: #d63031;
+            --comment-text: #009432;
+            --code-bg: #2d3436;
+            --code-text: #dfe6e9;
+            --terminal-bg: #fff5f5;
+            --terminal-border: #ffcccc;
+            --explanation-bg: #eef7fb;
+            --explanation-border: #b3e5fc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--primary-color);
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 25px;
+            color: #ecf0f1;
+            text-decoration: none;
+            transition: background 0.3s;
+            border-left: 4px solid transparent;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            width: calc(100% - var(--sidebar-width));
+            max-width: 1000px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            border-bottom: 4px solid var(--accent-color);
+            padding-bottom: 10px;
+            margin-bottom: 40px;
+        }
+
+        h2.task-title {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h3 {
+            color: var(--accent-color);
+            margin-top: 40px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 8px;
+        }
+
+        .section {
+            background: var(--card-bg);
+            padding: 30px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .note {
+            background-color: #e1f5fe;
+            border-left: 5px solid #0288d1;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .explanation {
+            background-color: var(--explanation-bg);
+            border-left: 4px solid var(--explanation-border);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.95em;
+            color: #455a64;
+        }
+
+        /* Logic Explanation Box */
+        .logic-box {
+            background-color: #2d2d2d;
+            color: #f1f1f1;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', Courier, monospace;
+            margin-bottom: 20px;
+            border: 1px solid #444;
+        }
+        .logic-step { margin-bottom: 8px; }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+            border: 1px solid #ccc;
+        }
+
+        /* Terminal Output */
+        .terminal-output {
+            background-color: var(--terminal-bg);
+            border: 1px solid var(--terminal-border);
+            color: #2d3436;
+            font-family: 'Courier New', Courier, monospace;
+            padding: 15px;
+            white-space: pre-wrap;
+            border-radius: 6px;
+            margin-top: 15px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+
+        /* Utils */
+        .error-red { color: var(--error-text); font-weight: bold; }
+        .comment-green { color: var(--comment-text); font-style: italic; }
+        .verifier-black { color: #000000; font-weight: bold; display: block; margin-top: 10px; }
+        
+        .success-tag { background: #00b894; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; vertical-align: middle;}
+        .fail-tag { background: #d63031; color: white; padding: 4px 10px; border-radius: 12px; font-size: 0.8em; margin-left: 10px; vertical-align: middle;}
+
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Assignment 2</h2>
+        <a href="#task1">Task 1: Absolute Value</a>
+        <a href="#task2">Task 2: First Negative</a>
+        <a href="#task3">Task 3: Factorial</a>
+        <a href="#task4">Task 4: Tribonacci</a>
+    </div>
+
+    <div class="main-content">
+        <h1>Dafny Logic Assignment Report</h1>
+        <p><strong>Group Submission:</strong> Experimental Records of Preconditions, Postconditions, Invariants, and Variants.</p>
+
+        <div id="task1" class="section">
+            <h2 class="task-title">Task 1: Absolute Value</h2>
+            <p><strong>Objective:</strong> Compute the absolute value of an integer variable.</p>
+            
+            <div class="note">
+                <strong>Note on Preconditions:</strong> No specific preconditions are required because the absolute value is defined for all integers. We can add <code>requires true</code> if needed for style.
+            </div>
+
+            <h3>Experiment 1: Correct Implementation <span class="success-tag">Verified</span></h3>
+            <pre>
+method Abs(x: int) returns (y: int)
+    ensures y >= 0
+    ensures y == x || y == -x
+{
+    if x < 0 { return -x; }
+    else { return x; }
+}</pre>
+            <div class="explanation">
+                <strong>Why it works:</strong> The postconditions cover both properties of absolute value: non-negativity and magnitude correctness. Dafny can explore both branches of the <code>if</code> statement to prove this.
+            </div>
+
+            <h3>Experiment 2: Weak Postcondition <span class="fail-tag">Assertion Error</span></h3>
+            <p><strong>Modification:</strong> Removed <code>ensures y >= 0</code> and ran a test method.</p>
+            <pre>
+method TestAbs() {
+   var y := Abs(-5);
+   assert y > 0; 
+}</pre>
+            <div class="terminal-output">
+test.dfy(22,3): <span class="error-red">Error: assertion might not hold</span>
+   |
+22 |    assert y > 0; 
+   |    <span class="error-red">^^^^^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 9 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Dafny treats methods as "black boxes" when they are called. Even though the code inside <code>Abs</code> correctly returns a positive number, the <em>contract</em> (the <code>ensures</code> clause) did not promise it. Therefore, <code>TestAbs</code> cannot assume <code>y > 0</code>.
+            </div>
+
+            <h3>Experiment 3: Incorrect Logic <span class="fail-tag">Postcondition Error</span></h3>
+            <p><strong>Case:</strong> Returning <code>x</code> when <code>x < 0</code>.</p>
+            <div class="terminal-output">
+test.dfy(7,0): <span class="error-red">Error: a postcondition could not be proved on this return path</span>
+  |
+7 | {
+  | <span class="error-red">^</span>
+
+test.dfy(5,13): Related location: this is the postcondition that could not be proved
+  |
+5 |   ensures x' >= 0
+  |              <span class="error-red">^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 8 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Here the implementation contradicts the contract. We promised <code>y >= 0</code>, but if the input is negative, we returned it directly. Dafny catches this violation immediately.
+            </div>
+        </div>
+
+        <div id="task2" class="section">
+            <h2 class="task-title">Task 2: Find First Negative Index</h2>
+            <p><strong>Objective:</strong> Find the index of the first occurrence of a negative number in an array.</p>
+
+            <h3>Experiment 1: Missing Precondition <span class="fail-tag">Null Errors</span></h3>
+            <p><strong>Modification:</strong> Commented out <code>requires a != null</code>.</p>
+            <div class="terminal-output">
+test.dfy(23,26): <span class="error-red">Error: target object might be null</span>
+   |
+23 |   ensures -1 <= index < a.Length 
+   |                           <span class="error-red">^^^^^^</span>
+
+test.dfy(28,18): <span class="error-red">Error: target object might be null</span>
+   |
+28 |   while index < a.Length
+   |                 <span class="error-red">^^^^^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 7 verified, 5 errors</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> In Dafny, arrays are reference types and can be null. You cannot access properties like <code>a.Length</code> or read elements <code>a[index]</code> unless you explicitly prove the array exists.
+            </div>
+
+            <h3>Experiment 2: Importance of Postconditions <span class="fail-tag">Test Failures</span></h3>
+            <p>We used test methods to verify why the postconditions are necessary. By commenting out the specific `ensures` clauses in the main method, these tests fail because Dafny loses the guarantees.</p>
+
+            <pre>
+method TestBounds(a: array&lt;int&gt;)
+  requires a.Length > 0
+{
+  var i := FindFirstNegative(a);
+  
+  if i != -1 {
+      var val := a[i]; <span class="comment-green">// Error: index out of bounds</span>
+  }
+}
+
+method TestAllPositive(a: array&lt;int&gt;)
+  requires a.Length > 0
+{
+  var i := FindFirstNegative(a);
+  
+  if i == -1 {
+      assert a[0] >= 0; <span class="comment-green">// Error: assertion violation</span>
+  }
+}</pre>
+
+            <div class="terminal-output">
+test.dfy(52,18): <span class="error-red">Error: index out of range</span>
+   |
+52 |       var val := a[i]; 
+   |                   <span class="error-red">^</span>
+
+test.dfy(64,6): <span class="error-red">Error: assertion might not hold</span>
+   |
+64 |       assert a[0] >= 0; 
+   |       <span class="error-red">^^^^^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 12 verified, 2 errors</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Without <code>ensures 0 <= index < a.Length</code>, Dafny considers it possible for the method to return an index like 1000 for an array of size 5. Thus, <code>a[i]</code> is unsafe. Similarly, without the quantifier check, Dafny doesn't know that returning -1 implies the <em>entire</em> array is positive.
+            </div>
+
+            <h3>Experiment 3: Invariant Failures <span class="fail-tag">Verification Failed</span></h3>
+            <p><strong>Modification:</strong> Removing invariants prevents Dafny from proving the loop behaves correctly.</p>
+
+            <div class="terminal-output">
+test.dfy(30,46): <span class="error-red">Error: index out of range</span>
+   |
+30 |     invariant forall k :: 0 <= k < index ==> a[k] >= 0
+   |                                               <span class="error-red">^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 8 verified, 1 error</span>
+
+test.dfy(26,0): <span class="error-red">Error: a postcondition could not be proved on this return path</span>
+   |
+26 | {
+   | <span class="error-red">^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 8 verified, 2 errors</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Loops are verified using induction. Dafny "forgets" everything that happened in previous iterations unless you write it down in an invariant. If you remove the invariant stating "all scanned elements are positive", Dafny cannot prove the final result identifies the <em>first</em> negative number.
+            </div>
+
+            <h3>Experiment 4: Termination Error <span class="fail-tag">Variant Error</span></h3>
+            <p><strong>Modification:</strong> Changed variant to <code>decreases index</code> (which increases instead of decreases).</p>
+            <div class="terminal-output">
+test.dfy(28,2): <span class="error-red">Error: decreases expression might not decrease</span>
+   |
+28 |   while index < a.Length
+   |   <span class="error-red">^^^^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 8 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> To prove total correctness (termination), Dafny needs a value that gets smaller with every step and stops at 0. Since <code>index</code> grows larger, it cannot serve as a proof that the loop will end.
+            </div>
+        </div>
+
+        <div id="task3" class="section">
+            <h2 class="task-title">Task 3: Factorial</h2>
+            <p><strong>Objective:</strong> Compute the factorial of a positive integer.</p>
+
+            <div class="logic-box">
+                <strong>Logic Explanation:</strong>
+                <div class="logic-step">1. Initially: i = 0, f = 1, and Factorial(0) = 1 (checked)</div>
+                <div class="logic-step">2. Loop iteration 1: i := 1, f := 1 * 1 = 1 = Factorial(1) (checked)</div>
+                <div class="logic-step">3. Loop iteration 2: i := 2, f := 1 * 2 = 2 = Factorial(2) (checked)</div>
+                <div class="logic-step">4. Loop iteration 3: i := 3, f := 2 * 3 = 6 = Factorial(3) (checked)</div>
+                <div class="logic-step">5. When loop ends: i == n, so f == Factorial(n) (satisfies postcondition)</div>
+                <div style="margin-top: 10px; color: #81ecec;">The invariant guarantees that each multiplication step correctly computes the next factorial value.</div>
+            </div>
+
+            <h3>Experiment 1: Incorrect Precondition <span class="fail-tag">Precondition Error</span></h3>
+            <p><strong>Modification:</strong> Changed <code>requires n >= 0</code> to <code>requires n > 0</code>. This causes issues with recursive definitions where <code>n</code> might reach 0.</p>
+            
+            <div class="terminal-output">
+test.dfy(89,37): <span class="error-red">Error: function precondition could not be proved</span>
+   |
+89 |   if n == 0 then 1 else n * Factorial(n - 1)
+   |                                     <span class="error-red">^</span>
+
+test.dfy(86,13): Related location: this proposition could not be proved
+   |
+86 |   requires n > 0
+   |              <span class="error-red">^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 12 verified, 3 errors</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> The ghost function <code>Factorial(n)</code> is usually defined recursively. If we enforce <code>n > 0</code>, then the recursive step <code>Factorial(n-1)</code> might try to pass 0, which violates the strict positivity requirement, causing the proof to fail.
+            </div>
+
+            <h3>Experiment 2: Incorrect Variant <span class="fail-tag">Termination Error</span></h3>
+            <p><strong>Modification:</strong> Changed <code>decreases n - i</code> to <code>decreases n - 100</code>.</p>
+            <div class="terminal-output">
+test.dfy(89,37): <span class="error-red">Error: decreases expression must be bounded below by 0</span>
+   |
+89 |   if n == 0 then 1 else n * Factorial(n - 1)
+   |                                     <span class="error-red">^</span>
+
+test.dfy(87,14): Related location: this decreases clause was not satisfied
+   |
+87 |   decreases n - 100
+   |              <span class="error-red">^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 14 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> The variant must be bounded by 0. If <code>n</code> is 50, then <code>n - 100</code> is -50, which is invalid for a termination measure in Dafny. The verifier suspects this could lead to infinite loops.
+            </div>
+
+            <h3>Experiment 3: Missing Invariant <span class="fail-tag">Postcondition Error</span></h3>
+            <p><strong>Modification:</strong> Commented out the invariant.</p>
+            <div class="terminal-output">
+test.dfy(95,0): <span class="error-red">Error: a postcondition could not be proved on this return path</span>
+   |
+95 | {
+   | <span class="error-red">^</span>
+
+test.dfy(94,12): Related location: this is the postcondition that could not be proved
+   |
+94 |   ensures f == Factorial(n)
+   |            <span class="error-red">^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 14 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Without the invariant <code>f == Factorial(i)</code>, the loop calculates numbers, but Dafny doesn't track that these numbers actually correspond to the mathematical definition of factorial. At the end, it cannot verify the result matches <code>Factorial(n)</code>.
+            </div>
+
+            <h3>Experiment 4: Missing Postcondition <span class="fail-tag">Assertion Error</span></h3>
+            <p><strong>Modification:</strong> Commented out the <code>ensures</code> statement. The main method verifies, but test methods fail because the result is unknown.</p>
+            <pre>
+method TestFactorialValue() {
+  var f := ComputeFactorial(3);
+  assert f == 6; <span class="comment-green">// Error: assertion violation</span>
+}</pre>
+            <div class="terminal-output">
+test.dfy(116,2): <span class="error-red">Error: assertion might not hold</span>
+    |
+116 |   assert f == 6; 
+    |   <span class="error-red">^^^^^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 14 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> If the method doesn't promise it returns the factorial (via <code>ensures</code>), the caller only knows it gets back *some* integer. It cannot be sure that integer is 6, even if the code works perfectly.
+            </div>
+        </div>
+
+        <div id="task4" class="section">
+            <h2 class="task-title">Task 4: Tribonacci Sequence</h2>
+            <p><strong>Objective:</strong> Iterative implementation of Tribonacci $T_n = T_{n-1} + T_{n-2} + T_{n-3}$ using simultaneous assignment.</p>
+
+            <div class="logic-box">
+                <strong>Logic Explanation:</strong>
+                <div class="logic-step">1. State: Three variables (a, b, c) track consecutive terms.</div>
+                <div class="logic-step">2. Update: (a, b, c) := (b, c, a+b+c) moves the window forward.</div>
+                <div class="logic-step">3. Invariant: a == Trib(i), b == Trib(i+1), c == Trib(i+2).</div>
+                <div style="margin-top: 10px; color: #81ecec;">If one variable is updated incorrectly, the relationship between a, b, and c breaks.</div>
+            </div>
+
+            <div class="note">
+                <strong>Note:</strong> Changing the <code>decreases</code> variant causes termination errors similar to previous tasks. Also, setting invariant bounds like <code>2 <= i <= n</code> can cause index-out-of-bounds errors during initialization or loop exit.
+            </div>
+
+            <h3>Experiment 1: Incorrect Preconditions <span class="fail-tag">Precondition Error</span></h3>
+            <p><strong>Modification:</strong> Changing <code>requires n >= 0</code> to <code>requires n > 0</code>.</p>
+            <div class="terminal-output">
+test.dfy(128,35): <span class="error-red">Error: function precondition could not be proved</span>
+    |
+128 |   else Trib(n-1) + Trib(n-2) + Trib(n-3)
+    |                                      <span class="error-red">^</span>
+
+test.dfy(122,13): Related location: this proposition could not be proved
+    |
+122 |   requires n > 0
+    |              <span class="error-red">^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 14 verified, 3 errors</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Similar to Task 3, if the recursive definition `Trib` assumes `n` can go down to 0, but your precondition forces `n > 0`, the recursive calls will fail to meet the requirements of the function definition itself.
+            </div>
+
+            <h3>Experiment 2: Incorrect Initialization/Invariant <span class="fail-tag">Entry Error</span></h3>
+            <p><strong>Modification:</strong> Changing the initial value of <code>i</code> or the invariant definition on purpose.</p>
+            <div class="terminal-output">
+test.dfy(149,16): <span class="error-red">Error: this loop invariant could not be proved on entry</span>
+ Related message: loop invariant violation
+    |
+149 |     invariant a == Trib(i-2)
+    |                 <span class="error-red">^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 16 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Dafny checks invariants in two places: (1) Upon entering the loop, and (2) After every iteration. This error means the variables `a`, `b`, or `c` were not initialized to values that match the formula `Trib(i-2)` before the loop even started.
+            </div>
+
+            <h3>Experiment 3: Sequential Assignment Order <span class="fail-tag">Maintenance Error</span></h3>
+            <p><strong>Modification:</strong> Using <code>a:=b; b:=c; c:=a+b+c;</code>.</p>
+            <div class="terminal-output">
+test.dfy(149,16): <span class="error-red">Error: this invariant could not be proved to be maintained by the loop</span>
+ Related message: loop invariant violation
+    |
+149 |     invariant a == Trib(i-2)
+    |                 <span class="error-red">^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 16 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> Dafny allows simultaneous assignment: <code>a, b := b, a</code> swaps values safely. If you do it sequentially (<code>a:=b; b:=a</code>), you overwrite `a` before you can use its old value. This breaks the Tribonacci logic because `c` needs the *old* `a`, not the new one.
+            </div>
+
+            <h3>Experiment 4: Interdependent Invariants <span class="fail-tag">Logic Error</span></h3>
+            <p><strong>Modification:</strong> Changing one invariant (e.g., <code>c == Trib(i)</code>) affects the others.</p>
+            <div class="terminal-output">
+test.dfy(151,16): <span class="error-red">Error: this invariant could not be proved to be maintained by the loop</span>
+ Related message: loop invariant violation
+    |
+151 |     invariant c == Trib(i)
+    |                 <span class="error-red">^^</span>
+
+test.dfy(134,0): <span class="error-red">Error: a postcondition could not be proved on this return path</span>
+    |
+134 | {
+    | <span class="error-red">^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 16 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> The loop invariants rely on each other. Proving `c` is correct in the *next* iteration requires assuming `a` and `b` were correct in the *current* iteration. If you break one link in the chain, the inductive proof for the whole system collapses.
+            </div>
+
+            <h3>Experiment 5: Missing Postcondition <span class="fail-tag">Assertion Error</span></h3>
+            <p><strong>Modification:</strong> Removing the <code>ensures</code> clause and testing the result.</p>
+            <pre>
+method TestTribValue()
+{
+  var t := ComputeTribonacci(5);
+   
+  assert t == 7; <span class="comment-green">// Error: assertion violation</span>
+} </pre>
+            <div class="terminal-output">
+test.dfy(176,2): <span class="error-red">Error: assertion might not hold</span>
+    |
+176 |   assert t == 7; 
+    |   <span class="error-red">^^^^^^</span>
+
+<span class="verifier-black">Dafny program verifier finished with 15 verified, 1 error</span>
+            </div>
+            <div class="explanation">
+                <strong>Explanation:</strong> As seen in previous tasks, without an `ensures` clause, the `ComputeTribonacci` method is a black box to the rest of the program. It calculates the result, but refuses to sign a contract guaranteeing what that result is. Therefore, `assert t == 7` fails verification.
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
